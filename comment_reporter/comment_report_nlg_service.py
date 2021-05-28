@@ -4,6 +4,7 @@ from collections import defaultdict
 from typing import Dict, Iterable, List, Optional, Tuple
 
 from .resources.sentiment_stats_resource import SentimentStatsResource
+from .resources.general_summary_resource import GeneralSummaryResource
 from .resources.hate_speech_stats_resource import HateSpeechResource
 from .resources.generic_stats_resource import GenericStatsResource
 from .constants import CONJUNCTIONS, get_error_message
@@ -47,6 +48,7 @@ class CommentReportNlgService(object):
         self.processor_resources = [
             GenericStatsResource(),
             HateSpeechResource(),
+            GeneralSummaryResource(),
             SentimentStatsResource(),
         ]
 
