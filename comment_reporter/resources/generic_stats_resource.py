@@ -9,10 +9,10 @@ log = logging.getLogger("root")
 
 
 TEMPLATE = """
-en: This report describes an automated analysis conducted on {value} comments
+en: This report describes an automated analysis conducted on {value} comments.
 | value_type = stats:count
 
-en: The report has been generated automatically, in parts using machine learning methods, and no guarantee is made with regard to the accuracy of its contents
+en: The report has been generated automatically, in parts using machine learning methods, and no guarantee is made with regard to the accuracy of its contents.
 | value_type = stats:disclaimer
 """  # noqa: E501
 

@@ -11,16 +11,16 @@ log = logging.getLogger("root")
 
 
 TEMPLATE = """
-en: Of the analyzed comments, a total of {value} were identified as containing hate speech
+en: Of the analyzed comments, a total of {value} were identified as containing hate speech.
 | value_type = hate_speech:blocked:abs, value > 0
 
-en: Of the analyzed comments, none were identified as containing hate speech
+en: Of the analyzed comments, none were identified as containing hate speech.
 | value_type = hate_speech:blocked:abs, value = 0
 
-en: This corresponds to {value} % of all comments
+en: This corresponds to {value} % of all comments.
 | value_type = hate_speech:blocked:rel
 
-en: For example, the following comment was identified as containing hate speech: " {value} "
+en: For example, the following comment was identified as containing hate speech: <blockquote> {value} </blockquote>
 | value_type = hate_speech:blocked:example
 """
 
