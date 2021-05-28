@@ -30,6 +30,7 @@ class CommentReportMessageGenerator(NLGPipelineComponent):
                     messages.extend(new_messages)
             except Exception as ex:
                 log.error("Message parser crashed: {}".format(ex), exc_info=True)
+                raise
 
         if not generation_succeeded:
             log.error("Failed to parse any Message from input")
