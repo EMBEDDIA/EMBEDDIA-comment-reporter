@@ -85,7 +85,7 @@ class HeadlineHTMLSurfaceRealizer(SurfaceRealizer):
 class BodyHTMLSurfaceRealizer(SurfaceRealizer):
     paragraph_start = "<p>"
     paragraph_end = "</p>"
-    sentence_end = ""
+    sentence_end = " "
     sentence_start = ""
     fail_on_empty = False
 
