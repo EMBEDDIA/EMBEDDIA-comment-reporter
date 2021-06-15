@@ -57,7 +57,7 @@ paths:
         '200':
           description: OK
     post:
-      description: Generate a report on the COVID-19 situation of a country
+      description: Generate a report about the input comments. Both language parameters are optional. Leaving out the comment_language field implies the comments are multilingual.
       produces:
         - application/json
       consumes:
