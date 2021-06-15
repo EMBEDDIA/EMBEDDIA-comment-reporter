@@ -3,6 +3,7 @@ import random
 from collections import defaultdict
 from typing import Dict, Iterable, List, Optional, Tuple
 
+from .resources.general_topic_modeling_resource import GeneralTopicModelingResource
 from .resources.sentiment_stats_resource import SentimentStatsResource
 from .resources.general_summary_resource import GeneralSummaryResource
 from .resources.hate_speech_stats_resource import HateSpeechResource
@@ -50,6 +51,7 @@ class CommentReportNlgService(object):
             HateSpeechResource(),
             GeneralSummaryResource(),
             SentimentStatsResource(),
+            GeneralTopicModelingResource(),
         ]
 
         # Templates
