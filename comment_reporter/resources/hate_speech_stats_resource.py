@@ -43,7 +43,7 @@ def _generate_hate_speech_blocked_example(
     combined = [(label, confidence, comment) for (label, confidence, comment) in combined if label != "Non-Blocked"]
     if not combined:
         return None
-    return Message(Fact(max(combined, key=lambda x: x[1])[2], "hate_speech:blocked:example", 8))
+    return Message(Fact(max(combined, key=lambda x: x[1])[2], "hate_speech:blocked:example", 9_08))
 
 
 class HateSpeechResource(ProcessorResource):
