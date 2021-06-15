@@ -2,7 +2,7 @@ import argparse
 import logging.handlers
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Optional
 
 import bottle
 import yaml
@@ -79,15 +79,15 @@ def allow_cors(opts):
     return decorator
 
 
-LANGUAGES = ["en", "fi"]
+LANGUAGES = ["en"]
 
 #
 # END INIT
 #
 
 
-def generate(language: str, comments: List[str]) -> Tuple[str, List[str]]:
-    return service.run_pipeline(language, comments)
+def generate(output_language: str, comments: List[str], comment_language: Optional[str]) -> Tuple[str, List[str]]:
+    return service.run_pipeline(output_language, comments, comment_language)
 
 
 @app.route("/report", method=["POST", "OPTIONS"])
@@ -101,20 +101,21 @@ def api_generate_json() -> Dict[str, Any]:
         return {"errors": ["Missing or empty request body"]}
 
     comments = parameters.get("comments")
-    language = parameters.get("language")
+    output_language = parameters.get("output_language")
+    comment_language = parameters.get("comment_language")
 
     errors = []
 
-    if language not in LANGUAGES:
-        errors.append("Invalid or missing language. Query /languages for valid options.")
+    if output_language not in LANGUAGES:
+        errors.append("Invalid or missing output_language. Query /languages for valid options.")
     if not comments:
         errors.append("Invalid or missing comment list.")
     if errors:
         response.status = 400
         return {"errors": errors}
 
-    body, errors = generate(language, comments)
-    output = {"language": language, "body": body}
+    body, errors = generate(output_language, comments, comment_language)
+    output = {"output_language": output_language, "body": body}
     if errors:
         output["errors"] = errors
     return output

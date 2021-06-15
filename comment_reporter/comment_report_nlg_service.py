@@ -103,28 +103,30 @@ class CommentReportNlgService(object):
         else:
             yield BodyHTMLSurfaceRealizer()
 
-    def run_pipeline(self, language: str, comments: List[str]) -> Tuple[str, List[str]]:
+    def run_pipeline(
+        self, output_language: str, comments: List[str], comment_language: Optional[str]
+    ) -> Tuple[str, List[str]]:
         log.info("Configuring Body NLG Pipeline")
         self.body_pipeline = NLGPipeline(self.registry, *self._get_components("body"))
         self.headline_pipeline = NLGPipeline(self.registry, *self._get_components("headline"))
 
         errors: List[str] = []
 
-        log.info("Running Body NLG pipeline: language={}".format(language))
+        log.info("Running Body NLG pipeline: language={}".format(output_language))
         try:
-            body = self.body_pipeline.run((comments,), language, prng_seed=self.registry.get("seed"))
+            body = self.body_pipeline.run((comments,), output_language, prng_seed=self.registry.get("seed"))
             log.info("Body pipeline complete")
         except NoMessagesForSelectionException as ex:
             log.error("%s", ex)
-            body = get_error_message(language, "no-messages-for-selection")
+            body = get_error_message(output_language, "no-messages-for-selection")
             errors.append("NoMessagesForSelectionException")
         except NoInterestingMessagesException as ex:
             log.info("%s", ex)
-            body = get_error_message(language, "no-interesting-messages-for-selection")
+            body = get_error_message(output_language, "no-interesting-messages-for-selection")
             errors.append("NoInterestingMessagesException")
         except Exception as ex:
             log.exception("%s", ex)
-            body = get_error_message(language, "general-error")
+            body = get_error_message(output_language, "general-error")
             errors.append("{}: {}".format(ex.__class__.__name__, str(ex)))
 
         return body, errors

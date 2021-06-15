@@ -75,9 +75,12 @@ paths:
                 items:
                   type: string
                 example: "[]"
-              language:
+              output_language:
                 type: string
                 example: "en"
+              comment_language:
+                type: string
+                example: "hr"
       responses:
         '200':
           description: OK
