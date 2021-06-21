@@ -11,18 +11,20 @@ log = logging.getLogger("root")
 
 
 class CommentReportMessageGenerator(NLGPipelineComponent):
-    def run(self, registry: Registry, random: Generator, language: str, comments: List[str]) -> Tuple[List[Message]]:
+    def run(
+        self, registry: Registry, random: Generator, output_language: str, comments: List[str], comment_language: str
+    ) -> Tuple[List[Message]]:
         """
         Run this pipeline component.
         """
-        message_parsers: List[Callable[[List[str]], List[Message]]] = registry.get("message-parsers")
+        message_parsers: List[Callable[[str, List[str]], List[Message]]] = registry.get("message-parsers")
 
         messages: List[Message] = []
         generation_succeeded = False
         for message_parser in message_parsers:
             log.debug(f"Trying parser {message_parser}")
             try:
-                new_messages = message_parser(comments)
+                new_messages = message_parser(comment_language, comments)
                 for message in new_messages:
                     log.debug("Parsed message {}".format(message))
                 if new_messages:

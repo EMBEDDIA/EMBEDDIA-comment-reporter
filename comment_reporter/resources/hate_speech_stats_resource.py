@@ -50,8 +50,8 @@ class HateSpeechResource(ProcessorResource):
     def templates_string(self) -> str:
         return TEMPLATE
 
-    def generate_messages(self, comments: List[str]) -> List[Message]:
-        hate_speech_data = self._query_model(comments)
+    def generate_messages(self, language: str, comments: List[str]) -> List[Message]:
+        hate_speech_data = self._query_model(language, comments)
         labels = hate_speech_data["labels"]
         confidences = hate_speech_data["confidences"]
         messages: List[Message] = [
@@ -65,10 +65,10 @@ class HateSpeechResource(ProcessorResource):
     def slot_realizer_components(self) -> List[Type[SlotRealizerComponent]]:
         return []
 
-    def _query_model(self, comments: List[str]):
+    def _query_model(self, language: str, comments: List[str]):
         log.info(f"comments: {comments}")
         response = requests.post(
-            self.read_config_value("HATESPEECH", "url", allow_none=False), json={"texts": comments}
+            self.read_config_language_value("HATESPEECH", language, allow_none=False), json={"texts": comments}
         )
         log.info(f"{response}, {response.reason}, {response.text}")
         return response.json()

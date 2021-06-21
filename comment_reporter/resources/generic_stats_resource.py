@@ -29,7 +29,7 @@ class GenericStatsResource(ProcessorResource):
     def templates_string(self) -> str:
         return TEMPLATE
 
-    def generate_messages(self, comments: List[str]) -> List[Message]:
+    def generate_messages(self, language: str, comments: List[str]) -> List[Message]:
         messages: List[Message] = [
             _parse_count_msg(comments),
             _generate_disclaimer(),

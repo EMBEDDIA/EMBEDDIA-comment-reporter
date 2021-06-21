@@ -16,14 +16,23 @@ class ProcessorResource(ABC):
         pass
 
     @abstractmethod
-    def generate_messages(self, comments: List[str]) -> List[Message]:
+    def generate_messages(self, language: str, comments: List[str]) -> List[Message]:
         pass
 
     @abstractmethod
     def slot_realizer_components(self) -> List[Type[SlotRealizerComponent]]:
         pass
 
-    def read_config_value(self, group: str, key: str, allow_none: bool) -> Optional[str]:
+    def read_config_language_value(self, group: str, key: str, allow_none: bool = False) -> Optional[str]:
+        value = self.read_config_value(group, key, True)
+        if not value:
+            value = self.read_config_value(group, "all", True)
+        if (not value) and (not allow_none):
+            raise Exception(f"config.ini missing mandatory value '{key}' for group '{group}'")
+        return value
+
+    @staticmethod
+    def read_config_value(group: str, key: str, allow_none: bool = False) -> Optional[str]:
         config_path = Path(__file__).parent / ".." / ".." / "config.ini"
         try:
             config = configparser.ConfigParser()

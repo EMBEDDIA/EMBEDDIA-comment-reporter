@@ -56,7 +56,9 @@ class GeneralTopicModelingResource(ProcessorResource):
             return ordered_labels[n][0]
         return None
 
-    def _gen_messages_most_common_topic(self, comments: List[str], labels: List[List[str]]) -> List[Message]:
+    def _gen_messages_most_common_topic(
+        self, language: str, comments: List[str], labels: List[List[str]]
+    ) -> List[Message]:
         label = self._nth_most_common_label(labels, 0)
         if label is None:
             return []
@@ -69,12 +71,17 @@ class GeneralTopicModelingResource(ProcessorResource):
         comments_with_labels = [
             comment for (comment, comment_labels) in zip(comments, labels) if label in comment_labels
         ]
-        summary = self._query_summarizer(comments_with_labels)[0]
-        summary_msg = Message(Fact(summary, "most_common_topic:example", 6_07))
+        summary = self._query_summarizer(language, comments_with_labels)
+        if summary is not None:
+            summary_msg = Message(Fact(summary[0], "most_common_topic:example", 6_07))
+        else:
+            summary_msg = None
 
         return [name_msg, prevalence_msg, summary_msg]
 
-    def _gen_messages_second_most_common_topic(self, comments: List[str], labels: List[List[str]]) -> List[Message]:
+    def _gen_messages_second_most_common_topic(
+        self, language: str, comments: List[str], labels: List[List[str]]
+    ) -> List[Message]:
         label = self._nth_most_common_label(labels, 1)
         if label is None:
             return []
@@ -87,15 +94,18 @@ class GeneralTopicModelingResource(ProcessorResource):
         comments_with_labels = [
             comment for (comment, comment_labels) in zip(comments, labels) if label in comment_labels
         ]
-        summary = self._query_summarizer(comments_with_labels)[0]
-        summary_msg = Message(Fact(summary, "second_most_common_topic:example", 5_07))
+        summary = self._query_summarizer(language, comments_with_labels)
+        if summary is not None:
+            summary_msg = Message(Fact(summary[0], "second_most_common_topic:example", 5_07))
+        else:
+            summary_msg = None
 
         return [name_msg, prevalence_msg, summary_msg]
 
     def templates_string(self) -> str:
         return TEMPLATE
 
-    def generate_messages(self, comments: List[str]) -> List[Message]:
+    def generate_messages(self, language: str, comments: List[str]) -> List[Message]:
 
         # TM data is a list of python string representations, where each python string representation represents a list
         # of strings. So we first turn the python string representations into a format that we can parse as JSON
@@ -103,7 +113,9 @@ class GeneralTopicModelingResource(ProcessorResource):
         # still does a thing where each label is in the form of "label_top<idx> : <label name>" so we have to remove
         # that first part as extraneous. Optimally, the API would be changed, but I don't have time to arrange for
         # that, so instead we'll stick with this weird stuff.
-        topic_data = self._query_topic_model(comments)
+        topic_data = self._query_topic_model(language, comments)
+        if topic_data is None:
+            return []
         labels = [
             [label.split(" : ")[1] for label in json.loads(label_list.replace("'", '"'))]
             for label_list in topic_data["suggested_label"]
@@ -111,24 +123,26 @@ class GeneralTopicModelingResource(ProcessorResource):
         # labels now looks like [["label1", "label2"], ["label1", "label3"]]
 
         messages: List[Message] = []
-        messages.extend(self._gen_messages_most_common_topic(comments, labels))
-        messages.extend(self._gen_messages_second_most_common_topic(comments, labels))
+        messages.extend(self._gen_messages_most_common_topic(language, comments, labels))
+        messages.extend(self._gen_messages_second_most_common_topic(language, comments, labels))
         return [m for m in messages if m is not None]
 
     def slot_realizer_components(self) -> List[Type[SlotRealizerComponent]]:
         return []
 
-    def _query_topic_model(self, comments: List[str]):
+    def _query_topic_model(self, language: str, comments: List[str]):
         log.info(f"comments: {comments}")
-        response = requests.post(
-            self.read_config_value("TOPIC_MODEL", "url", allow_none=False), json={"texts": comments}
-        )
+        url = self.read_config_language_value("TOPIC_MODEL", language, allow_none=True)
+        if url is None:
+            return None
+        response = requests.post(url, json={"texts": comments})
         log.info(f"{response}, {response.reason}, {response.text}")
         return response.json()
 
-    def _query_summarizer(self, comments: List[str]) -> List[str]:
-        response = requests.post(
-            self.read_config_value("SUMMARIZATION", "url", allow_none=False), json={"comments": comments, "count": 1}
-        )
+    def _query_summarizer(self, language: str, comments: List[str]) -> Optional[List[str]]:
+        url = self.read_config_language_value("SUMMARIZATION", language, allow_none=True)
+        if url is None:
+            return None
+        response = requests.post(url, json={"comments": comments, "count": 1})
         log.info(f"{response}, {response.reason}, {response.text}")
         return response.json()["summary"]

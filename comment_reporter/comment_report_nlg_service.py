@@ -112,11 +112,16 @@ class CommentReportNlgService(object):
         self.body_pipeline = NLGPipeline(self.registry, *self._get_components("body"))
         self.headline_pipeline = NLGPipeline(self.registry, *self._get_components("headline"))
 
+        if not comment_language:
+            comment_language = "all"
+
         errors: List[str] = []
 
         log.info("Running Body NLG pipeline: language={}".format(output_language))
         try:
-            body = self.body_pipeline.run((comments,), output_language, prng_seed=self.registry.get("seed"))
+            body = self.body_pipeline.run(
+                (comments, comment_language), output_language, prng_seed=self.registry.get("seed")
+            )
             log.info("Body pipeline complete")
         except NoMessagesForSelectionException as ex:
             log.error("%s", ex)

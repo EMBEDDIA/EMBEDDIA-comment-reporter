@@ -29,28 +29,36 @@ def _generate_sentiment_mean(sentiments: List[float]) -> Optional[Message]:
 
 
 def _generate_sentiment_positive_count(sentiments: List[float]) -> Optional[Message]:
-    n_positive = len([f for f in sentiments if f >= 0.5])
+    n_positive = len([f for f in sentiments if f >= 0.25])
     if n_positive == 0:
         return None
     return Message(Fact(n_positive / len(sentiments) * 100, "sentiment:perc_positive", 7_09))
+
+
+def _generate_sentiment_negative_count(sentiments: List[float]) -> Optional[Message]:
+    n_positive = len([f for f in sentiments if f <= -0.25])
+    if n_positive == 0:
+        return None
+    return Message(Fact(n_positive / len(sentiments) * 100, "sentiment:perc_negative", 7_08))
 
 
 def _generate_sentiment_most_positive(sentiments: List[str], comments: List[str]) -> Optional[Message]:
     combined = zip(sentiments, comments)
     if not combined:
         return None
-    return Message(Fact(max(combined, key=lambda x: x[0])[1], "sentiment:most_positive", 7_08))
+    return Message(Fact(max(combined, key=lambda x: x[0])[1], "sentiment:most_positive", 7_07))
 
 
 class SentimentStatsResource(ProcessorResource):
     def templates_string(self) -> str:
         return TEMPLATE
 
-    def generate_messages(self, comments: List[str]) -> List[Message]:
-        sentiments = self._query_model(comments)["sentiments"]
+    def generate_messages(self, language: str, comments: List[str]) -> List[Message]:
+        sentiments = self._query_model(language, comments)["sentiments"]
         messages: List[Message] = [
             _generate_sentiment_mean(sentiments),
             _generate_sentiment_positive_count(sentiments),
+            _generate_sentiment_negative_count(sentiments),
             _generate_sentiment_most_positive(sentiments, comments),
         ]
 
@@ -59,10 +67,11 @@ class SentimentStatsResource(ProcessorResource):
     def slot_realizer_components(self) -> List[Type[SlotRealizerComponent]]:
         return []
 
-    def _query_model(self, comments: List[str]):
+    def _query_model(self, language: str, comments: List[str]):
         log.info(f"comments: {comments}")
         response = requests.post(
-            self.read_config_value("SENTIMENTANALYSIS", "url", allow_none=False), json={"comments": comments}
+            self.read_config_language_value("SENTIMENTANALYSIS", language, allow_none=False),
+            json={"comments": comments},
         )
         log.info(f"{response}, {response.reason}, {response.text}")
         return response.json()
