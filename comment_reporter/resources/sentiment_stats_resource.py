@@ -14,8 +14,11 @@ TEMPLATE = """
 en: The mean sentiment of the comments was {value} (higher values indicate more positive sentiment)
 | value_type = sentiment:mean
 
-en: Of the analyzed comments, {value} percentage were positive (sentiment >= 0.5).
+en: Of the analyzed comments, {value} percentage were positive (sentiment >= 0.25).
 | value_type = sentiment:perc_positive
+
+en: {value} percent of the comments were negative (sentiment <= -0.25).
+| value_type = sentiment:perc_negative
 
 en: The most positive comment was <blockquote> {value} </blockquote>
 | value_type = sentiment:most_positive

@@ -11,18 +11,18 @@ log = logging.getLogger("root")
 
 
 TEMPLATE = """
-en: Of the analyzed comments, a total of {value} were identified as containing hate speech.
+en: Of the analyzed comments, a total of {value} were identified as containing blockable content.
 | value_type = hate_speech:blocked:abs, value > 0
 
-en: Of the analyzed comments, none were identified as containing hate speech.
+en: Of the analyzed comments, none were identified as containing blockable content.
 | value_type = hate_speech:blocked:abs, value = 0
 
 en: This corresponds to {value} % of all comments.
 | value_type = hate_speech:blocked:rel
 
-en: For example, the following comment was identified as containing hate speech: <blockquote> {value} </blockquote>
+en: For example, the following comment was identified as containing blockable content: <blockquote> {value} </blockquote>
 | value_type = hate_speech:blocked:example
-"""
+"""  # noqa: E501
 
 
 def _generate_hate_speech_blocked_abs(labels: List[str]) -> Message:
