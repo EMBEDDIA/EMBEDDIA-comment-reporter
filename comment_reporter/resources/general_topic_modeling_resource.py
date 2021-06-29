@@ -23,10 +23,10 @@ en: The most common topic present in the comments was {value}.
 en: The second most common topic present in the comments was {value}.
 | value_type = second_most_common_topic:name
 
-en: It was present in {value} % of the comments.
+en: It was featured prominently in {value} % of the comments.
 | value_type in {prevalence}
 
-en: The topic is exemplified by this snippet: <blockquote> {value} </blockquote>
+en: Comments discussing this topic are best summarized by this comment: <blockquote> {value} </blockquote>
 | value_type in {example}
 """
 

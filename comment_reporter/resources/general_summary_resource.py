@@ -14,7 +14,7 @@ log = logging.getLogger("root")
 
 
 TEMPLATE = """
-en: In general, the analyzed comments are best summarized by this comment: <blockquote> {value} </blockquote>
+en: In general, the analyzed comments are best summarized as follows: <blockquote> {value} </blockquote>
 | value_type = summary
 """
 

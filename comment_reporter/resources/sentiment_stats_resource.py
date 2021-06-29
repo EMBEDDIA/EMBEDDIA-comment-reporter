@@ -11,7 +11,7 @@ log = logging.getLogger("root")
 
 
 TEMPLATE = """
-en: The mean sentiment of the comments was {value} (zero indicates a neutral sentiment)
+en: The mean sentiment of the comments was {value} (zero indicates a neutral sentiment).
 | value_type = sentiment:mean
 
 en: Of the analyzed comments, {value} % were positive (sentiment >= 0.25).
