@@ -39,7 +39,8 @@ class GeneralTopicModelingResource(ProcessorResource):
         weighted_labels = [list(enumerate(label_list)) for label_list in labels]
         # [[(0, "label1"), (1, "label2")], [(0, "label3"), (1, "label1")]]
 
-        weighted_labels = [[(label, 1 / (idx + 1)) for (idx, label) in label_list] for label_list in weighted_labels]
+        weighted_labels = [[(label, 1) for (idx, label) in label_list] for label_list in weighted_labels]
+        # weighted_labels = [[(label, 1 / (idx + 1)) for (idx, label) in label_list] for label_list in weighted_labels]
         # [[("label1", 1), ("label2", 0.5)], [("label3", 1), ("label1", 0.5)]]
 
         counts = defaultdict(int)
