@@ -1,6 +1,7 @@
 import logging
 from itertools import chain
 from typing import List, Type
+import string
 
 from nltk import sent_tokenize
 import requests
@@ -23,7 +24,11 @@ class GeneralSummaryResource(ProcessorResource):
         return TEMPLATE
 
     def generate_messages(self, language: str, comments: List[str]) -> List[Message]:
-        summary = " ".join(self._query_model(language, comments)["summary"])
+        summary = self._query_model(language, comments)["summary"]
+        summary = [
+            sentence + "." if sentence.strip()[-1] not in string.punctuation else sentence for sentence in summary
+        ]
+        summary = " ".join(summary)
         return [Message(Fact(summary, "summary", 8_10))]
 
     def slot_realizer_components(self) -> List[Type[SlotRealizerComponent]]:
