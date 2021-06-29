@@ -45,7 +45,7 @@ class GeneralTopicModelingResource(ProcessorResource):
 
         counts = defaultdict(int)
         for (label, weight) in chain(*weighted_labels):
-            if label.lower() == "stopwords":
+            if label.lower() in ["stopwords", "croatia inflections"]:
                 continue
             counts[label] += weight
         # {"label1": 1.5, "label2": 0.5, "label3": 1}
