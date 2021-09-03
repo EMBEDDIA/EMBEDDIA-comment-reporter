@@ -1,5 +1,17 @@
 # Report generator from comments
 
+## Running and setup
+
+The comment reporter is dockerized, and should primarily be run as a standard docker container. The server runs in port 8081, which can be mapped via the standard docker commands to something else. Swagger-documentation of the API is available.
+
+It is dependent on the following four microservices (all dockerized as well), which need to be accessible via HTTP(s):
+- https://github.com/EMBEDDIA/comment-filter
+- https://github.com/EMBEDDIA/EMBEDDIA-sentiment-analysis-service
+- https://github.com/EMBEDDIA/EMBEDDIA-summarization-service
+- https://github.com/EMBEDDIA/croatian_topic_api
+
+The file `config.ini` needs to be modified to point the comment report generator at these services.
+
 ## Dependencies
 
 ### FOMA
